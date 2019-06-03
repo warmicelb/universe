@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context.xsd
+    http://www.springframework.org/schema/aop
+    http://www.springframework.org/schema/aop/spring-aop.xsd
+    http://www.springframework.org/schema/mvc
+    http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+    <!-- 对包中的所有类进行扫描类上的注解 -->
+    <context:component-scan base-package="com.ice.universe.controller" use-default-filters="false">
+        <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
+    <aop:aspectj-autoproxy/>
+
+    <!-- 启用容器默认的 DefaultServlet ：servlet 在找页面时 ，走的是dispatcherServlet路线 -->
+    <!-- 找不到的时候会报 404 ，加上这个默认的 servlet 时候 ，servlet 在找不到的时候会去找静态的内容 -->
+    <mvc:default-servlet-handler/>
+
+    <!-- 激活@Controller模式 -->
+    <mvc:annotation-driven>
+        <mvc:message-converters>
+            <bean class="org.springframework.http.converter.StringHttpMessageConverter">
+                <property name="defaultCharset" value="UTF-8"/>
+            </bean>
+            <bean class="com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter">
+                <property name="supportedMediaTypes">
+                    <list>
+                        <!-- 避免IE执行AJAX时,返回JSON出现下载文件 -->
+                        <!-- 这里顺序不能写反，一定要先写text/html，否则IE下会出现下载提示 -->
+                        <value>text/html;charset=UTF-8</value>
+                        <value>application/json;charset=UTF-8</value>
+                    </list>
+                </property>
+                <property name="fastJsonConfig">
+                    <bean class="com.alibaba.fastjson.support.config.FastJsonConfig">
+                        <property name="charset" value="UTF-8"/>
+                        <property name="dateFormat" value="yyyy-MM-dd HH:mm:ss"/>
+
+                        <property name="serializerFeatures">
+                            <list>
+                                <value>WriteMapNullValue</value>
+                                <value>QuoteFieldNames</value>
+                                <value>WriteDateUseDateFormat</value>
+                            </list>
+                        </property>
+                        <property name="features">
+                            <list>
+                                <value>AllowArbitraryCommas</value>
+                                <value>AllowUnQuotedFieldNames</value>
+                                <value>DisableCircularReferenceDetect</value>
+                            </list>
+                        </property>
+                    </bean>
+                </property>
+            </bean>
+            <!-- 配置 Jackson2 处理 Response 结果数据 -->
+            <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+                <property name="supportedMediaTypes">
+                    <list>
+                        <value>text/html;charset=UTF-8</value>
+                        <value>application/json;charset=UTF-8</value>
+                    </list>
+                </property>
+                <property name="objectMapper">
+                    <bean class="org.springframework.http.converter.json.Jackson2ObjectMapperFactoryBean">
+                        <!-- 如果不配置则默认返回时间戳 -->
+                        <property name="simpleDateFormat" value="yyyy-MM-dd HH:mm:ss"/>
+                        <!--<property name="dateFormat">-->
+                        <!--<bean class="java.text.SimpleDateFormat">-->
+                        <!--<constructor-arg type="java.lang.String" value="yyyy-MM-dd HH:mm:ss"/>-->
+                        <!--</bean>-->
+                        <!--</property>-->
+                        <!-- 时区设置 -->
+                        <property name="objectMapper">
+                            <bean class="com.fasterxml.jackson.databind.ObjectMapper">
+                                <property name="timeZone">
+                                    <bean id ="timeZone4Job" class="java.util.TimeZone" factory-method="getTimeZone">
+                                        <constructor-arg value="GMT+8:00" type="java.lang.String"/>
+                                    </bean>
+                                </property>
+                            </bean>
+                        </property>
+                        <!-- 字段为null时不显示 -->
+                        <property name="serializationInclusion">
+                            <value>NON_NULL</value>
+                        </property>
+                        <property name="featuresToDisable">
+                            <bean class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
+                                <!-- Map 中值为 null 的键值对不显示 -->
+                                <property name="staticField" value="com.fasterxml.jackson.databind.SerializationFeature.WRITE_NULL_MAP_VALUES"/>
+                            </bean>
+                        </property>
+                    </bean>
+                </property>
+            </bean>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+
+    <!-- 支持上传文件 -->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"/>
+
+</beans>
