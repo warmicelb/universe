@@ -12,9 +12,11 @@
     <!--<param-value>classpath:spring/*.xml</param-value>-->
   <!--</context-param>-->
   <!--编码过滤器   解决post乱码问题-->
+  <!-- 开启servlet3.0一步任务的支持，必须在所有filter和servlet中加入<async-supported>true</async-supported>-->
   <filter>
     <filter-name>characterEncodingFilter</filter-name>
     <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+    <async-supported>true</async-supported>
     <init-param>
       <param-name>encoding</param-name>
       <param-value>utf-8</param-value>
@@ -54,6 +56,7 @@
     <param-value>classpath:spring/*.xml</param-value>
     </init-param>
     <load-on-startup>1</load-on-startup>
+    <async-supported>true</async-supported>
   </servlet>
   <servlet-mapping>
     <servlet-name>SpringMVC</servlet-name>
@@ -61,10 +64,14 @@
     <url-pattern>/</url-pattern>
   </servlet-mapping>
   
+  <welcome-file-list>
+    <welcome-file>index.jsp</welcome-file>
+  </welcome-file-list>
   <!--配置druidServlet-->
   <servlet>
     <servlet-name>DruidStatView</servlet-name>
     <servlet-class>com.alibaba.druid.support.http.StatViewServlet</servlet-class>
+    <async-supported>true</async-supported>
   </servlet>
   <servlet-mapping>
     <servlet-name>DruidStatView</servlet-name>

@@ -52,7 +52,8 @@ public class CoRsFilter implements Filter {
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse,
                          FilterChain chain) throws IOException, ServletException {
-
+        //这里手动设置ASYNC_SUPPORTED，开启servlet3.0一步任务的支持
+        servletRequest.setAttribute("org.apache.catalina.ASYNC_SUPPORTED", true);
         /**
          * 由于doFilter传递进来的默认是ServletRequest对象,而设置业务相关参数和方法是在HttpServletRequest里
          * 所以我们需要强制转换一下,转换过后我们就可以进行设置了
