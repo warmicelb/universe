@@ -1,5 +1,7 @@
 package com.ice.universe.service.impl;
 
+import com.ice.universe.common.datasource.Routing;
+import com.ice.universe.common.datasource.RoutingSelect;
 import com.ice.universe.domain.User;
 import com.ice.universe.repository.UserMapper;
 import com.ice.universe.service.UserService;
@@ -19,6 +21,7 @@ public class UserServiceImpl implements UserService {
     private UserMapper userMapper;
 
     @Override
+    @RoutingSelect(dataSourceType = Routing.SLAVE, dataSource = "slave")
     public User findUserById(Long id) {
         return userMapper.selectByPrimaryKey(id);
     }

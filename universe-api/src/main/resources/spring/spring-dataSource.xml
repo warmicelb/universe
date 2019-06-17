@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+	   http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+
+    <bean id="dataSourceConfig" abstract="true">
+        <property name="initialSize" value="${jdbc.initialSize}"/>
+        <property name="minIdle" value="${jdbc.minIdle}"/>
+        <property name="maxActive" value="${jdbc.maxPoolSize}"/>
+        <property name="maxWait" value="60000"/>
+        <property name="timeBetweenEvictionRunsMillis" value="60000"/>
+        <property name="minEvictableIdleTimeMillis" value="300000"/>
+        <property name="validationQuery" value="SELECT 'x'"/>
+        <property name="testWhileIdle" value="true"/>
+        <property name="testOnBorrow" value="false"/>
+        <property name="testOnReturn" value="false"/>
+        <property name="poolPreparedStatements" value="true"/>
+        <property name="maxPoolPreparedStatementPerConnectionSize" value="20"/>
+        <property name="filters" value="stat"/>
+    </bean>
+
+    <!--主数据源-->
+    <bean id="dataSourceMaster" class="com.alibaba.druid.pool.DruidDataSource" parent="dataSourceConfig" destroy-method="close">
+        <property name="url" value="${master.jdbc.url}"/>
+        <property name="username" value="${master.jdbc.username}"/>
+        <property name="password" value="${master.jdbc.password}"/>
+    </bean>
+
+    <bean id="dataSourceSlave" class="com.alibaba.druid.pool.DruidDataSource" parent="dataSourceConfig" destroy-method="close">
+        <property name="url" value="${master.jdbc.url}"/>
+        <property name="username" value="${slave.jdbc.username}"/>
+        <property name="password" value="${slave.jdbc.password}"/>
+    </bean>
+
+    <!-- 主从路由数据源 :: 辅助数据源 : 海外贷超 -->
+    <bean id="dataSource" class="com.ice.universe.common.datasource.RoutingDatasource">
+        <property name="master" ref="dataSourceMaster"/>
+        <property name="slaves">
+            <map>
+                <entry key="slave" value-ref="dataSourceSlave"/>
+            </map>
+        </property>
+    </bean>
+
+    <!-- 启用数据库读写分离 @RoutingSelect 选择器 -->
+    <bean class="com.ice.universe.common.datasource.RoutingDataSourceAspect"/>
+
+    <!--这里事物管理指定该抽象数据源对象即可-->
+    <bean name="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"></property>
+    </bean>
+
+</beans>
