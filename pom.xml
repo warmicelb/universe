@@ -25,7 +25,7 @@
         <!--lombok版本号-->
         <lombok.version>1.18.2</lombok.version>
         <javaee-api.version>7.0</javaee-api.version>
-        <junit.version>4.12</junit.version>
+        <junit.version>4.13.1</junit.version>
         <mysql-connector-java.version>8.0.11</mysql-connector-java.version>
         <c3p0.version>0.9.5.2</c3p0.version>
         <!--druid版本-->
