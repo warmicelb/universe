@@ -46,7 +46,7 @@
         <javassist.version>3.21.0-GA</javassist.version>
         <cglib.version>3.2.5</cglib.version>
         <!--poi-->
-        <poi.version>3.9</poi.version>
+        <poi.version>3.17</poi.version>
         <!--redis-->
         <jedis.version>2.9.0</jedis.version>
         <spring-data-redis.version>1.8.6.RELEASE</spring-data-redis.version>
