@@ -38,7 +38,7 @@
         <commons-beanutils.version>1.9.3</commons-beanutils.version>
         <commons-codec.version>1.10</commons-codec.version>
         <commons-collections.version>3.2.2</commons-collections.version>
-        <commons-httpclient.version>4.5.3</commons-httpclient.version>
+        <commons-httpclient.version>4.5.13</commons-httpclient.version>
         <commons-httpcore.version>4.4.6</commons-httpcore.version>
         <guava.version>20.0</guava.version>
         <!-- aspectj, javassist, cglib -->
